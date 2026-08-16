@@ -32,9 +32,9 @@
   }
 
   body{
-    min-height:100vh;
+    min-height:100dvh;
     display:flex;
-    align-items:center;
+    align-items:flex-start;
     justify-content:center;
     position:relative;
   }
@@ -63,7 +63,7 @@
     z-index:1;
     width:100%;
     max-width:560px;
-    padding:40px 28px;
+    padding:max(20px, env(safe-area-inset-top) + 12px) 24px 24px;
     text-align:center;
   }
 
@@ -72,24 +72,24 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:6px;
+    gap:2px;
     transition:opacity 0.6s ease, transform 0.6s ease;
   }
 
   .eyebrow{
     font-family:'Jost', sans-serif;
-    font-size:0.72rem;
-    letter-spacing:0.28em;
+    font-size:0.68rem;
+    letter-spacing:0.26em;
     text-transform:uppercase;
     color:var(--ink);
     opacity:0.65;
-    margin-bottom:6px;
+    margin-bottom:2px;
   }
 
   .tulip-wrap{
-    width:min(58vw, 230px);
-    height:min(58vw, 230px);
-    margin:4px 0 10px;
+    width:min(40vw, 168px);
+    height:min(40vw, 168px);
+    margin:0 0 4px;
   }
 
   #tulipSvg{ width:100%; height:100%; overflow:visible; }
@@ -113,8 +113,8 @@
   .count-number{
     font-family:'Fraunces', serif;
     font-weight:300;
-    font-size:clamp(3.2rem, 16vw, 5.4rem);
-    line-height:1;
+    font-size:clamp(5.5rem, 30vw, 9rem);
+    line-height:0.95;
     color:var(--ink);
     font-variant-numeric:tabular-nums;
   }
@@ -125,6 +125,7 @@
     letter-spacing:0.08em;
     color:var(--rose);
     min-height:1.4em;
+    margin-top:2px;
   }
 
   /* ---------- REVEAL STAGE ---------- */
@@ -138,14 +139,14 @@
 
   .wordmark{
     font-family:'Beau Rivage', cursive;
-    font-size:clamp(3rem, 13vw, 4.4rem);
+    font-size:clamp(2.5rem, 11vw, 3.8rem);
     color:var(--rose);
     line-height:1;
     opacity:0;
     transform:translateY(10px);
   }
 
-  .flourish{ width:180px; height:20px; margin:2px 0 14px; }
+  .flourish{ width:160px; height:18px; margin:0 0 10px; }
   .flourish path{
     fill:none;
     stroke:var(--gold);
@@ -157,9 +158,9 @@
     font-family:'Fraunces', serif;
     font-weight:600;
     font-style:italic;
-    font-size:clamp(1.5rem, 5.6vw, 2.1rem);
-    line-height:1.2;
-    margin:0 0 10px;
+    font-size:clamp(1.3rem, 5vw, 1.9rem);
+    line-height:1.15;
+    margin:0 0 8px;
     opacity:0;
     transform:translateY(10px);
   }
@@ -167,20 +168,20 @@
   .message{
     font-family:'Jost', sans-serif;
     font-weight:400;
-    font-size:0.98rem;
-    line-height:1.65;
+    font-size:0.9rem;
+    line-height:1.55;
     color:var(--ink);
     opacity:0.92;
     max-width:420px;
-    margin:0 auto 14px;
+    margin:0 auto 10px;
     opacity:0;
     transform:translateY(10px);
   }
 
   .gift-list{
     list-style:none;
-    margin:0 auto 16px;
-    padding:14px 0;
+    margin:0 auto 10px;
+    padding:9px 0;
     max-width:360px;
     text-align:left;
     border-top:1px solid rgba(59,42,34,0.18);
@@ -190,13 +191,13 @@
   }
   .gift-list li{
     font-family:'Jost', sans-serif;
-    font-size:0.9rem;
-    line-height:1.5;
+    font-size:0.84rem;
+    line-height:1.4;
     color:var(--ink);
     display:flex;
     align-items:baseline;
     gap:10px;
-    padding:4px 0;
+    padding:2px 0;
   }
   .gift-mark{ font-size:0.75rem; flex-shrink:0; }
   .gift-list strong{ color:var(--rose); font-weight:600; }
@@ -211,16 +212,16 @@
   }
 
   .signature{
-    margin-top:22px;
+    margin-top:12px;
     font-family:'Fraunces', serif;
     font-style:italic;
-    font-size:0.95rem;
+    font-size:0.9rem;
     color:var(--ink);
     opacity:0;
   }
 
   .replay{
-    margin-top:26px;
+    margin-top:16px;
     background:none;
     border:1px solid rgba(59,42,34,0.35);
     color:var(--ink);
