@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana y Rosa — Una sorpresa está floreciendo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,900;1,400&family=Beau+Rivage&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peach:#E7B98B;
+    --peach-deep:#D9A473;
+    --cream:#FBF3E7;
+    --ink:#3B2A22;
+    --rose:#A6525B;
+    --rose-light:#D08D8F;
+    --gold:#C79A54;
+    --line:#FFFFFF;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background:var(--peach);
+    color:var(--ink);
+    font-family:'Jost', sans-serif;
+    overflow:hidden;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+
+  /* fabric-like ambient texture, echoing the hand-sewn material she works with */
+  .texture{
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(ellipse 60% 45% at 30% 20%, rgba(255,255,255,0.20), transparent 60%),
+      radial-gradient(ellipse 55% 50% at 80% 85%, rgba(217,164,115,0.35), transparent 60%),
+      var(--peach);
+    z-index:0;
+  }
+  .texture::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:0.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:560px;
+    padding:40px 28px;
+    text-align:center;
+  }
+
+  /* ---------- COUNTDOWN STAGE ---------- */
+  #countdown-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .eyebrow{
+    font-family:'Jost', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--ink);
+    opacity:0.65;
+    margin-bottom:6px;
+  }
+
+  .tulip-wrap{
+    width:min(58vw, 230px);
+    height:min(58vw, 230px);
+    margin:4px 0 10px;
+  }
+
+  #tulipSvg{ width:100%; height:100%; overflow:visible; }
+  .tulip-guide{ fill:none; stroke:var(--line); stroke-width:2.4; opacity:0.18; }
+  .tulip-line{
+    fill:none;
+    stroke:var(--line);
+    stroke-width:2.6;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 1px 1px rgba(59,42,34,0.15));
+  }
+  .tulip-fill{
+    fill:var(--cream);
+    opacity:0;
+    transform-origin:120px 150px;
+  }
+  #needle circle{ fill:var(--gold); }
+  #needle line{ stroke:var(--gold); stroke-width:2; }
+
+  .count-number{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:clamp(3.2rem, 16vw, 5.4rem);
+    line-height:1;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .count-word{
+    font-family:'Jost', sans-serif;
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    color:var(--rose);
+    min-height:1.4em;
+  }
+
+  /* ---------- REVEAL STAGE ---------- */
+  #reveal-stage{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+  }
+  #reveal-stage.active{ display:flex; }
+
+  .wordmark{
+    font-family:'Beau Rivage', cursive;
+    font-size:clamp(3rem, 13vw, 4.4rem);
+    color:var(--rose);
+    line-height:1;
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  .flourish{ width:180px; height:20px; margin:2px 0 14px; }
+  .flourish path{
+    fill:none;
+    stroke:var(--gold);
+    stroke-width:2;
+    stroke-linecap:round;
+  }
+
+  .headline{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-style:italic;
+    font-size:clamp(1.5rem, 5.6vw, 2.1rem);
+    line-height:1.2;
+    margin:0 0 10px;
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  .message{
+    font-family:'Jost', sans-serif;
+    font-weight:400;
+    font-size:0.98rem;
+    line-height:1.65;
+    color:var(--ink);
+    opacity:0.92;
+    max-width:420px;
+    margin:0 auto 14px;
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  .gift-list{
+    list-style:none;
+    margin:0 auto 16px;
+    padding:14px 0;
+    max-width:360px;
+    text-align:left;
+    border-top:1px solid rgba(59,42,34,0.18);
+    border-bottom:1px solid rgba(59,42,34,0.18);
+    opacity:0;
+    transform:translateY(10px);
+  }
+  .gift-list li{
+    font-family:'Jost', sans-serif;
+    font-size:0.9rem;
+    line-height:1.5;
+    color:var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:4px 0;
+  }
+  .gift-mark{ font-size:0.75rem; flex-shrink:0; }
+  .gift-list strong{ color:var(--rose); font-weight:600; }
+
+  .note{
+    font-family:'Jost', sans-serif;
+    font-size:0.82rem;
+    letter-spacing:0.02em;
+    color:var(--rose);
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  .signature{
+    margin-top:22px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:0.95rem;
+    color:var(--ink);
+    opacity:0;
+  }
+
+  .replay{
+    margin-top:26px;
+    background:none;
+    border:1px solid rgba(59,42,34,0.35);
+    color:var(--ink);
+    font-family:'Jost', sans-serif;
+    font-size:0.75rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:10px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    opacity:0;
+    transition:background 0.25s ease, opacity 0.6s ease, transform 0.25s ease;
+  }
+  .replay:hover{ background:rgba(59,42,34,0.08); transform:translateY(-1px); }
+  .replay:focus-visible{ outline:2px solid var(--rose); outline-offset:3px; }
+
+  .fade-in{ animation:fadeUp 0.8s ease forwards; }
+  @keyframes fadeUp{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .petal{
+    position:fixed;
+    top:-30px;
+    z-index:2;
+    pointer-events:none;
+    opacity:0.9;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .fade-in{ animation-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="texture"></div>
+
+<main class="stage">
+
+  <!-- COUNTDOWN -->
+  <section id="countdown-stage" aria-live="polite">
+    <p class="eyebrow">un regalo está por florecer</p>
+
+    <div class="tulip-wrap">
+      <svg id="tulipSvg" viewBox="0 0 240 260">
+        <path class="tulip-guide" d="M120,40 C100,40 95,80 100,110 C105,130 115,140 120,145 C125,140 135,130 140,110 C145,80 140,40 120,40 Z
+                                       M85,58 C70,63 66,92 76,116 C83,130 96,138 106,140 C100,120 95,96 90,77 C88,68 87,62 85,58 Z
+                                       M155,58 C170,63 174,92 164,116 C157,130 144,138 134,140 C140,120 145,96 150,77 C152,68 153,62 155,58 Z
+                                       M120,165 L120,246
+                                       M120,192 C90,197 55,192 30,157 C55,172 90,177 120,167
+                                       M120,192 C150,197 185,192 210,157 C185,172 150,177 120,167" />
+        <path id="tulipPath" class="tulip-line tulip-fill" d="M120,40 C100,40 95,80 100,110 C105,130 115,140 120,145 C125,140 135,130 140,110 C145,80 140,40 120,40 Z
+                                       M85,58 C70,63 66,92 76,116 C83,130 96,138 106,140 C100,120 95,96 90,77 C88,68 87,62 85,58 Z
+                                       M155,58 C170,63 174,92 164,116 C157,130 144,138 134,140 C140,120 145,96 150,77 C152,68 153,62 155,58 Z
+                                       M120,165 L120,246
+                                       M120,192 C90,197 55,192 30,157 C55,172 90,177 120,167
+                                       M120,192 C150,197 185,192 210,157 C185,172 150,177 120,167" />
+        <g id="needle"><circle r="4"></circle><line x1="0" y1="0" x2="10" y2="-6"></line></g>
+      </svg>
+    </div>
+
+    <div class="count-number" id="countNumber">10</div>
+    <div class="count-word" id="countWord">hilo</div>
+  </section>
+
+  <!-- REVEAL -->
+  <section id="reveal-stage" aria-live="polite">
+    <p class="wordmark" id="wordmark">Ana y Rosa</p>
+    <svg class="flourish" viewBox="0 0 180 20"><path id="flourishPath" d="M5,10 C40,2 70,18 95,8 C120,-1 150,14 175,6"></path></svg>
+
+    <h1 class="headline" id="headline">¡Feliz Día de las Madres!</h1>
+
+    <p class="message" id="message">
+      Sé cuánto cariño le pones a cada prenda que confeccionas con tus propias manos.
+      Hoy quiero regalarte algo para que ese trabajo llegue más lejos: la tienda en
+      línea de <strong>Ana y Rosa</strong>, lista para vender a cualquier hora, a
+      cualquier persona, sin salir de tu taller.
+    </p>
+
+    <ul class="gift-list" id="giftList">
+      <li><span class="gift-mark">🌷</span> Dominio <strong>anayrosa.com</strong> por 2 años</li>
+      <li><span class="gift-mark">🌷</span> Hospedaje de la tienda por 2 años</li>
+      <li><span class="gift-mark">🌷</span> Diseño completo de la tienda</li>
+      <li><span class="gift-mark">🌷</span> Integración de pagos con tarjeta</li>
+    </ul>
+
+    <p class="note" id="note">Aún le estoy dando los últimos puntos — muy pronto la tendrás lista.</p>
+
+    <p class="signature" id="signature">Con todo mi cariño</p>
+
+    <button class="replay" id="replayBtn" type="button">Ver de nuevo</button>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const countdownStage = document.getElementById('countdown-stage');
+  const revealStage = document.getElementById('reveal-stage');
+  const countNumber = document.getElementById('countNumber');
+  const countWord = document.getElementById('countWord');
+  const tulipPath = document.getElementById('tulipPath');
+  const needle = document.getElementById('needle');
+  const replayBtn = document.getElementById('replayBtn');
+  const flourishPath = document.getElementById('flourishPath');
+
+  const words = ['hilo','aguja','tela','medida','puntada','diseño','dedicación','amor','sueño','¡ya casi!'];
+
+  const pathLength = tulipPath.getTotalLength();
+  tulipPath.style.strokeDasharray = pathLength;
+  tulipPath.style.strokeDashoffset = pathLength;
+
+  const flourishLength = flourishPath.getTotalLength();
+  flourishPath.style.strokeDasharray = flourishLength;
+  flourishPath.style.strokeDashoffset = flourishLength;
+
+  let tickTimer = null;
+  let drawAnim = null;
+
+  function resetVisuals(){
+    countdownStage.style.opacity = '1';
+    countdownStage.style.transform = 'none';
+    countdownStage.style.display = 'flex';
+    revealStage.classList.remove('active');
+    countNumber.textContent = '10';
+    countWord.textContent = words[0];
+    tulipPath.style.strokeDashoffset = pathLength;
+    tulipPath.style.opacity = '1';
+    document.querySelectorAll('.petal').forEach(p => p.remove());
+    ['wordmark','headline','message','giftList','note','signature'].forEach(id=>{
+      const el = document.getElementById(id);
+      el.classList.remove('fade-in');
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(10px)';
+    });
+    replayBtn.style.opacity = '0';
+    flourishPath.style.strokeDashoffset = flourishLength;
+    needle.style.opacity = '1';
+  }
+
+  function drawTulip(){
+    if (reduceMotion){
+      tulipPath.style.transition = 'stroke-dashoffset 0.6s linear';
+      tulipPath.style.strokeDashoffset = 0;
+      return;
+    }
+    const path = anime.path('#tulipPath');
+    drawAnim = anime.timeline({ easing:'linear' })
+      .add({
+        targets: '#tulipPath',
+        strokeDashoffset: [pathLength, 0],
+        duration: 10000
+      }, 0)
+      .add({
+        targets: '#needle',
+        translateX: path('x'),
+        translateY: path('y'),
+        rotate: path('angle'),
+        duration: 10000
+      }, 0);
+  }
+
+  function runCountdown(){
+    let n = 10;
+    countNumber.textContent = n;
+    countWord.textContent = words[10 - n];
+    drawTulip();
+
+    tickTimer = setInterval(() => {
+      n -= 1;
+      if (n >= 1){
+        countNumber.textContent = n;
+        countWord.textContent = words[10 - n];
+      } else {
+        clearInterval(tickTimer);
+        countNumber.textContent = '0';
+        countWord.textContent = '';
+        setTimeout(reveal, 450);
+      }
+    }, 1000);
+  }
+
+  function spawnPetals(){
+    if (reduceMotion) return;
+    const colors = ['var(--rose)','var(--rose-light)','var(--gold)','var(--cream)'];
+    const count = 16;
+    for (let i=0; i<count; i++){
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      const size = 8 + Math.random()*8;
+      const left = Math.random()*100;
+      const color = colors[i % colors.length];
+      petal.style.left = left + 'vw';
+      petal.style.width = size + 'px';
+      petal.style.height = (size*1.3) + 'px';
+      petal.style.background = color;
+      petal.style.borderRadius = '0% 60% 0% 60%';
+      document.body.appendChild(petal);
+
+      anime({
+        targets: petal,
+        translateY: window.innerHeight + 60,
+        translateX: (Math.random()*80 - 40),
+        rotate: Math.random()*360,
+        opacity: [0.9, 0],
+        duration: 3200 + Math.random()*1800,
+        delay: Math.random()*900,
+        easing: 'easeInSine',
+        complete: () => petal.remove()
+      });
+    }
+  }
+
+  function reveal(){
+    needle.style.transition = 'opacity 0.4s ease';
+    needle.style.opacity = '0';
+
+    countdownStage.style.opacity = '0';
+    countdownStage.style.transform = 'translateY(-12px)';
+
+    setTimeout(() => {
+      countdownStage.style.display = 'none';
+      revealStage.classList.add('active');
+      spawnPetals();
+
+      anime({
+        targets: tulipPath,
+        opacity: [1, 0.9],
+        scale: [1, 1.06, 1],
+        duration: 900,
+        easing: 'easeOutElastic(1, .6)'
+      });
+
+      const seq = ['wordmark','headline','message','giftList','note','signature'];
+      seq.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.style.animationDelay = (i * 0.18) + 's';
+        el.classList.add('fade-in');
+      });
+
+      anime({
+        targets: flourishPath,
+        strokeDashoffset: [flourishLength, 0],
+        duration: 900,
+        delay: 500,
+        easing: 'easeOutSine'
+      });
+
+      setTimeout(() => { replayBtn.style.transition = 'opacity 0.6s ease'; replayBtn.style.opacity = '1'; }, 1600);
+    }, 500);
+  }
+
+  replayBtn.addEventListener('click', () => {
+    if (drawAnim) drawAnim.pause();
+    if (tickTimer) clearInterval(tickTimer);
+    resetVisuals();
+    setTimeout(runCountdown, 300);
+  });
+
+  window.addEventListener('load', () => setTimeout(runCountdown, 500));
+})();
+</script>
+</body>
+</html>
